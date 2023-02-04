@@ -1,42 +1,44 @@
-
+import os
 
 MAX_CAPACITY = 4 # Procesos máximos por lote
-registeredId = []
+registeredID = []
 
-
-def newProcess(processes):
-  print(f'\nProceso {processes}')
+def newProcess(count):
+  os.system('cls')
+  print(f'\n\tProceso {count}')
   name = input('\nNombre del programador: ')
   operation = input('Operación a realizar: ')
   maxTime = input('Tiempo máximo estimado: ')
   numberID = input('Número de programa (ID): ')
   
-  
   # Validación de datos 
-  if not validId(numberID):
-    print('El ID ya se encuentra registrado, por favor ingrese otro')
-    return None
-
   if name == '' or operation == '' or maxTime == '' or numberID == '':
     print('\nNo se puede dejar ningún campo vacío.')
+    os.system('pause')
+    return None
+
+  if not validId(numberID):
+    print('\nEl ID ya se encuentra registrado, por favor ingrese otro')
+    os.system('pause')
     return None
 
   if not validTime(maxTime):
     print('\nEl tiempo máximo debe ser un número entero mayor a 0.')
+    os.system('pause')
     return None
 
   if not validOperation(operation):
     print('\nLa operación ingresada no es válida.')
+    os.system('pause')
     return None
 
-  registeredId.append(numberID) # Agrega el ID a la lista de IDs registrados
-  print(registeredId) # Imprime la lista de IDs registrados
+  registeredID.append(numberID) # Agrega el ID a la lista de IDs registrados
+
   return [name, operation, maxTime, numberID]
 
 # Validación de ID
 def validId(numberID):
-  
-  if numberID in registeredId:
+  if numberID in registeredID:
     return False
   else:
     return True
@@ -55,26 +57,32 @@ def validTime (maxTime):
     return False
 
 
+def printBatch(batch):
+  for process in batch:
+    pass
+
+def printLots(lots):
+  pass
+
+
 if __name__ == '__main__':
   # Código principal
   lots = []
   batch = []
+  count = 1
 
-  processes = int(input('Ingrese la cantidad de procesos que desea agregar: '))
+  os.system('cls')
+  processes = int(input('\nIngrese la cantidad de procesos que desea agregar: '))
 
   while processes != 0:
-    process = newProcess(processes)
-
+    process = newProcess(count)
     if process is not None:
       batch.append(process)
-      
+      count += 1
       if len(batch) == MAX_CAPACITY or processes == 1:
         lots.append(batch)
         batch = []
 
       processes -= 1
-    
+
   print(lots)
-
-
-
