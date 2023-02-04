@@ -55,5 +55,3 @@ if __name__ == '__main__':
 
 
 
-git config --global user.email "juan.salazar1291@alumnos.udg.mx"
-git config --global user.name "JuanSalvi"
