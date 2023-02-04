@@ -1,6 +1,7 @@
 
 
 MAX_CAPACITY = 4 # Procesos máximos por lote
+registeredId = []
 
 
 def newProcess(processes):
@@ -9,8 +10,13 @@ def newProcess(processes):
   operation = input('Operación a realizar: ')
   maxTime = input('Tiempo máximo estimado: ')
   numberID = input('Número de programa (ID): ')
-
+  
+  
   # Validación de datos 
+  if not validId(numberID):
+    print('El ID ya se encuentra registrado, por favor ingrese otro')
+    return None
+
   if name == '' or operation == '' or maxTime == '' or numberID == '':
     print('\nNo se puede dejar ningún campo vacío.')
     return None
@@ -23,8 +29,17 @@ def newProcess(processes):
     print('\nLa operación ingresada no es válida.')
     return None
 
+  registeredId.append(numberID) # Agrega el ID a la lista de IDs registrados
+  print(registeredId) # Imprime la lista de IDs registrados
   return [name, operation, maxTime, numberID]
 
+# Validación de ID
+def validId(numberID):
+  
+  if numberID in registeredId:
+    return False
+  else:
+    return True
 
 def validOperation (operation):
   if '+' in operation or '-' in operation or '*' in operation or '/' in operation or '%' in operation:
@@ -60,3 +75,6 @@ if __name__ == '__main__':
       processes -= 1
     
   print(lots)
+
+
+
