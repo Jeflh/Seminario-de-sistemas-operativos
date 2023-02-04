@@ -25,7 +25,7 @@ def newProcess(processes):
     print('\nEl tiempo máximo debe ser un número entero mayor a 0.')
     return None
 
-  if not validateOperation(operation):
+  if not validOperation(operation):
     print('\nLa operación ingresada no es válida.')
     return None
 
