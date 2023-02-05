@@ -76,6 +76,7 @@ def printInterface(batch, pending, numLots, total_process):
         finishedProcesses.append(process)
 
       print(f'Lotes pendientes: {pending}')
+      print(f'Operaciones pendientes: {total_process}')
       # Aquí falta el contador pero todavia no lo tenemos eda
       print('------------------------------------------------')
       print(f'\tLote en ejecución', end='\n\n')
@@ -87,6 +88,7 @@ def printInterface(batch, pending, numLots, total_process):
       print('------------------------------------------------')
       print('\tProcesos terminados', end='\n\n')
       printFinished()
+      print('------------------------------------------------')
       maxTime -= 1
       elapsedTime += 1
       time.sleep(0.1)
@@ -95,7 +97,6 @@ def printInterface(batch, pending, numLots, total_process):
         total_process -= 1
       
       if pending == 0 and total_process == 0:
-        print('------------------------------------------------')
         print('Se han terminado todos los procesos.', end='\n\n')
         os.system('pause')
       else:
@@ -192,8 +193,14 @@ def makeOperation(operation):
 
 def printFinished():
   print ("{:<5} {:<10} {:<10} {:<5}".format('ID','Operación', 'Resultado', 'Lote'), end='\n\n')
+  count = 1
   for process in finishedProcesses:
     print ("{:<5} {:<10} {:<10} {:<5}".format(process[3],process[1], process[4], process[5]))
+    if count == 4:
+      print('------------------------------------------------')
+      count = 1
+    else:
+      count += 1
   
 
 if __name__ == '__main__':
