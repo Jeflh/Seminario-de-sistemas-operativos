@@ -9,10 +9,18 @@ finishedProcesses = []
 def newProcess(count):
   os.system('cls')
   print(f'\n\tProceso {count}')
+
   name = input('\nNombre del programador: ')
   operation = input('Operación a realizar: ')
-  maxTime = int(input('Tiempo máximo estimado: '))
-  numberID = input('Número de programa: ')
+
+  try:
+    maxTime = int(input('Tiempo máximo estimado: '))
+    numberID = int(input('Número de programa: '))
+    
+  except ValueError:
+    print('\nEl tiempo estimado y el ID deben ser enteros positivos.')
+    os.system('pause')
+    return None
   
   # Validación de datos 
   if name == '' or operation == '' or maxTime == '' or numberID == '':
