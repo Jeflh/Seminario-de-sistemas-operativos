@@ -63,7 +63,13 @@ def validTime (maxTime):
     return False
 
 
-def printInterface(batch, pending, numLots, total_process):
+def timer(startTime, endTime):
+  elapsedTime = int(endTime - startTime)
+  minutes, seconds = divmod(elapsedTime, 60)
+  return f'[{minutes:02d}:{seconds:02d}]'
+
+
+def printInterface(batch, pending, numLots, total_process, startTime):
   for process in batch:
     elapsedTime = 0;
     maxTime = process[2]
@@ -75,22 +81,23 @@ def printInterface(batch, pending, numLots, total_process):
         process.append(numLots-pending)
         finishedProcesses.append(process)
 
-      print(f'Lotes pendientes: {pending}')
-      # Aquí falta el contador pero todavia no lo tenemos eda
+      print(f'Lotes pendientes: {pending}', end='\t\t\t')
+      print(timer(startTime, time.time()))
       print('------------------------------------------------')
       print(f'\tLote en ejecución', end='\n\n')
       printBatch(batch)
       print('------------------------------------------------')
       printProcess(process)
-      print(f'\nTiempo restante: {process[2]}', end='\t')
+      print(f'\nTiempo restante: {maxTime}', end='\t')
       print(f'Tiempo transcurrido: {elapsedTime}')
       print('------------------------------------------------')
       print('\tProcesos terminados', end='\n\n')
       printFinished()
+
       maxTime -= 1
       elapsedTime += 1
-      time.sleep(0.1)
-
+      time.sleep(1)
+      
       if maxTime == 0:
         total_process -= 1
       
@@ -219,8 +226,9 @@ if __name__ == '__main__':
   time.sleep(0.5)
   os.system('cls')
   pending = len(lots) - 1
+  startTime = time.time()
 
   for lot in lots:
-    printInterface(lot, pending, len(lots), total_process)
+    printInterface(lot, pending, len(lots), total_process, startTime)
     pending -= 1
     total_process -= 4
