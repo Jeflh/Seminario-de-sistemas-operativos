@@ -1,10 +1,10 @@
 import os
 import time
 
-
 MAX_CAPACITY = 4 # Procesos máximos por lote
 registeredID = []
 finishedProcesses = []
+
 
 def newProcess(count):
   os.system('cls')
