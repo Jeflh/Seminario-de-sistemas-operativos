@@ -13,9 +13,23 @@ def newProcess(count):
   name = input('\nNombre del programador: ')
   operation = input('Operación a realizar: ')
 
+  if not validOperation(operation):
+    print('\nLa operación ingresada no es válida.')
+    os.system('pause')
+    return None
+
   try:
     maxTime = int(input('Tiempo máximo estimado: '))
+    if not validTime(maxTime):
+      print('\nEl tiempo máximo debe ser un número entero mayor a 0.')
+      os.system('pause')
+      return None
+
     numberID = int(input('Número de programa: '))
+    if not validId(numberID):
+      print('\nEl ID ya se encuentra registrado, por favor ingrese otro')
+      os.system('pause')
+      return None
     
   except ValueError:
     print('\nEl tiempo estimado y el ID deben ser enteros positivos.')
@@ -28,20 +42,6 @@ def newProcess(count):
     os.system('pause')
     return None
 
-  if not validId(numberID):
-    print('\nEl ID ya se encuentra registrado, por favor ingrese otro')
-    os.system('pause')
-    return None
-
-  if not validTime(maxTime):
-    print('\nEl tiempo máximo debe ser un número entero mayor a 0.')
-    os.system('pause')
-    return None
-
-  if not validOperation(operation):
-    print('\nLa operación ingresada no es válida.')
-    os.system('pause')
-    return None
 
   registeredID.append(numberID) # Agrega el ID a la lista de IDs registrados
 
@@ -56,10 +56,36 @@ def validId(numberID):
 
 
 def validOperation (operation):
-  if '+' in operation or '-' in operation or '*' in operation or '/' in operation or '%' in operation:
-    return True
-  elif '/0' or '/ 0' in operation:
-    return False
+  if '+' in operation:
+    separeteItems = operation.split('+')
+    if separeteItems[0] == '' or separeteItems[1] == '':
+      return False
+    else:
+      return True
+  elif '-' in operation:
+    separeteItems = operation.split('-')
+    if separeteItems[0] == '' or separeteItems[1] == '':
+      return False
+    else:
+      return True
+  elif '*' in operation:
+    separeteItems = operation.split('*')
+    if separeteItems[0] == '' or separeteItems[1] == '':
+      return False
+    else:
+      return True
+  elif '%' in operation:
+    separeteItems = operation.split('%')
+    if separeteItems[0] == '' or separeteItems[1] == '':
+      return False
+    else:
+      return True
+  elif '/' in operation: 
+    separateItems = operation.split('/')
+    if separateItems[1] == '0' or separateItems[0] == '' or separateItems[1] == '':
+      return False
+    else:
+      return True
   else:
     return False
 
@@ -82,7 +108,7 @@ def printInterface(batch, pending, numLots, total_process, startTime):
     elapsedTime = 0;
     maxTime = process[2]
     while maxTime > 0:
-
+      # Falta borrar el proceso de la lista de procesos en ejecución
       if maxTime == 1:
         result = makeOperation(process[1])
         process.append(result)
