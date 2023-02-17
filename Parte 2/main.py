@@ -141,19 +141,19 @@ def printFinished():
 
 # Eventos de teclado
 def on_i_press(event):
-    if event.event_type == 'down':
+  if event.event_type == 'down':
       print('Se ha presionado la tecla I')
 
 def on_e_press(event):
-    if event.event_type == 'down':
+  if event.event_type == 'down':
       print('Se ha presionado la tecla E')
 
 def on_p_press(event):
-    if event.event_type == 'down':
+  if event.event_type == 'down':
       print('Se ha presionado la tecla P')
 
 def on_c_press(event):
-    if event.event_type == 'down':
+  if event.event_type == 'down':
       print('Se ha presionado la tecla C')
 
 
