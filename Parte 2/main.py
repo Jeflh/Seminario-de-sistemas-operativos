@@ -6,7 +6,8 @@ import threading
 
 MAX_CAPACITY = 4 # Procesos máximos por lote
 finishedProcesses = []
-
+pause_program = False
+global_time = 0
 
 def newProcess(count):
   numberID = count
@@ -30,13 +31,19 @@ def validTime (maxTime):
 
 
 def timer(startTime, endTime):
-  elapsedTime = int(endTime - startTime)
-  minutes, seconds = divmod(elapsedTime, 60)
-  return f'[{minutes:02d}:{seconds:02d}]'
+  global global_time
+  global_time = int(endTime - startTime)
+
+
+def showTime():
+  global global_time
+  minutes, seconds = divmod(global_time, 60)
+  print(f'[{minutes:02d}:{seconds:02d}]')
 
 
 def printInterface(batch, pending, processLeft, numLots, startTime):
-  
+  global pause_program
+  global global_time
   ejecutionBatch = batch.copy()
 
   for process in batch:
@@ -45,6 +52,19 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
     maxTime = process[2]
 
     while maxTime > 0:
+      
+      if pause_program:
+        print('------------------------------------------------')
+        print('El programa se encuentra pausado, presione "C" para continuar.')
+        pausedTime = time.time()
+        keyboard.wait('c')
+        resumedTime = time.time()
+
+        inactiveTime = int(resumedTime - pausedTime )
+        startTime = startTime + inactiveTime
+        global_time -= inactiveTime
+
+      os.system('cls')
 
       if maxTime == 1:
         result = makeOperation(process[1])
@@ -53,7 +73,8 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
         finishedProcesses.append(process)
         
       print(f'Lotes pendientes: {pending}', end='\t\t\t')
-      print(timer(startTime, time.time()))
+      timer(startTime, time.time())
+      showTime()
       print('------------------------------------------------')
 
       if pending != 0:
@@ -71,7 +92,7 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
       printFinished()
       maxTime -= 1
       elapsedTime += 1
-      time.sleep(0.1)
+      time.sleep(1)
 
       if maxTime == 0:
         processLeft -= 1
@@ -80,10 +101,7 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
         print('------------------------------------------------')
         print('Se han terminado todos los procesos.', end='\n\n')
         os.system('pause')
-      else:
-        os.system('cls')
-
-      
+          
     
 
 def printBatch(batch):
@@ -142,20 +160,26 @@ def printFinished():
 # Eventos de teclado
 def on_i_press(event):
   if event.event_type == 'down':
-      print('Se ha presionado la tecla I')
+    print('Se ha presionado la tecla I')
+    # Interrupción del procesamiento de lotes
+
 
 def on_e_press(event):
   if event.event_type == 'down':
-      print('Se ha presionado la tecla E')
+    print('Se ha presionado la tecla E')
+    # Error en el procesamiento de lotes
 
 def on_p_press(event):
   if event.event_type == 'down':
-      print('Se ha presionado la tecla P')
+    # Pausar el procesamiento de lotes
+    global pause_program
+    pause_program = True
 
 def on_c_press(event):
   if event.event_type == 'down':
-      print('Se ha presionado la tecla C')
-
+    # Continuar el procesamiento de lotes
+    global pause_program
+    pause_program = False
 
 if __name__ == '__main__':
   # Código principal
@@ -190,7 +214,6 @@ if __name__ == '__main__':
 
       total_process -= 1
 
-  time.sleep(0.5)
   os.system('cls')
   pending = len(lots) - 1
   startTime = time.time()
