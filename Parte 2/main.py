@@ -116,7 +116,7 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
 
       maxTime -= 1
       elapsedTime += 1
-      time.sleep(0.1)
+      time.sleep(1)
 
       if maxTime == 0:
         processLeft -= 1
