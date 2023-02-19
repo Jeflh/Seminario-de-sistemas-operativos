@@ -87,7 +87,19 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
         process[4] = 'Error'
         finishedProcesses.append(process)
         error = False
-        break
+        if pending == 0 and processLeft == 0:
+          os.system('cls')
+          print(f'Lotes pendientes: {pending}', end='\t\t\t')
+          timer(startTime, time.time())
+          showTime()
+          print('------------------------------------------------')
+          print('\tProcesos terminados', end='\n\n')
+          printFinished()
+          print('------------------------------------------------')
+          print('Se han terminado todos los procesos.', end='\n\n')
+          os.system('pause')
+        else:
+          break
 
       os.system('cls')
 
@@ -116,7 +128,7 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
 
       maxTime -= 1
       elapsedTime += 1
-      time.sleep(1)
+      time.sleep(0.1)
 
       if maxTime == 0:
         processLeft -= 1
