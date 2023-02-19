@@ -15,7 +15,10 @@ def newProcess(count):
   numberID = count
   operation = createOperation()
   maxTime = random.randint(5, 16)
-  return [numberID, operation, maxTime]
+  elapsedTime = 0
+  result = None
+  batch = None
+  return [numberID, operation, maxTime, elapsedTime, result, batch]
 
 
 def createOperation():
@@ -52,12 +55,14 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
   ejecutionBatch = batch.copy()
 
   for process in batch:
+    elapsedTime = 0
     ejecutionBatch.pop(0) 
     maxTime = process[2]
-    process.append(numLots-pending)
+  
+    process[5] = numLots-pending
     
     while maxTime > 0:
-      
+
       if pause_program:
         print('------------------------------------------------')
         print('El programa se encuentra pausado, presione "C" para continuar.')
@@ -71,14 +76,15 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
 
       if interruption:
         process[2] = maxTime
+        process[3] += elapsedTime
         ejecutionBatch.append(process)
         batch.append(process)
         interruption = False
         break
 
       if error:
-        process[2] = maxTime
-        process.append('Error')
+        processLeft -= 1
+        process[4] = 'Error'
         finishedProcesses.append(process)
         error = False
         break
@@ -86,10 +92,8 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
       os.system('cls')
 
       if maxTime == 1:
-        result = makeOperation(process[1])
-        
-        process.append(result)
-
+        result = makeOperation(process[1])       
+        process[4] = result
         finishedProcesses.append(process)
         
       print(f'Lotes pendientes: {pending}', end='\t\t\t')
@@ -98,7 +102,7 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
       print('------------------------------------------------')
 
       if len(ejecutionBatch) != 0:
-        print(f'\tLote en ejecución', end='\n\n')
+        print(f'\tProcesos en espera del lote en ejecución', end='\n\n')
         printBatch(ejecutionBatch)
         print('------------------------------------------------') 
 
@@ -109,7 +113,9 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
       
       print('\tProcesos terminados', end='\n\n')
       printFinished()
+
       maxTime -= 1
+      elapsedTime += 1
       time.sleep(0.1)
 
       if maxTime == 0:
@@ -126,18 +132,18 @@ def printInterface(batch, pending, processLeft, numLots, startTime):
         print('------------------------------------------------')
         print('Se han terminado todos los procesos.', end='\n\n')
         os.system('pause')
-    
+
 
 def printBatch(batch):
-  print ("{:<10} {:<5}".format('ID','Tiempo máximo estimado'), end='\n\n')
+  print ("{:<3} {:<25} {:<0}".format('ID','Tiempo máximo estimado', 'Tiempo transcurrido'), end='\n\n')
   for process in batch:
-    print ("{:<20} {:<5}".format(process[0],process[2]))
+    print ("{:<13} {:<24} {:<0}".format(process[0],process[2], process[3]))
 
 
 def printProcess(process):
   print('\tProceso en ejecución', end='\n\n')
   print(f'ID: {process[0]}')
-  print(f'Lote: {process[3]}')
+  print(f'Lote: {process[5]}')
   print(f'Operación: {process[1]}')
   print(f'Tiempo máximo estimado: {process[2]}')
   
@@ -179,7 +185,7 @@ def makeOperation(operation):
 def printFinished():
   print ("{:<5} {:<10} {:<10} {:<5}".format('ID','Operación', 'Resultado', 'Lote'), end='\n\n')
   for process in finishedProcesses:
-    print ("{:<5} {:<10} {:<10} {:<5}".format(process[0],process[1], process[4], process[3]))
+    print ("{:<5} {:<10} {:<10} {:<5}".format(process[0],process[1], process[4], process[5]))
   
 
 # Eventos de teclado
