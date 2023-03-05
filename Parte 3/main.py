@@ -22,15 +22,17 @@ def newProcess(count):
   maxTime = random.randint(5, 6) # 2 debe ser 5, 16
   elapsedTime = 0 # 3
   result = None # 4
-  blockedTime = None # 5
-  joinedTime = None # 6
-  finishedTime = None # 7
-  returnTime = None # 8
-  responseTime = None # 9
-  waitingTime = None # 10
-  serviceTime = None # 11
+  blockedTime = 0 # 5
+  joinedTime = '-' # 6 Tiempo de llegada
+  finishedTime = '-' # 7 Tiempo de finalización
+  returnTime = '-' # 8 Finalización - Llegada
+  responseTime = '-' # 9 
+  waitingTime = '-' # 10
+  serviceTime = '-' # 11
+  state = '-' # 12
+  tme = maxTime # 13
 
-  return [numberID, operation, maxTime, elapsedTime, result, blockedTime, joinedTime, finishedTime, returnTime, responseTime, waitingTime, serviceTime]
+  return [numberID, operation, maxTime, elapsedTime, result, blockedTime, joinedTime, finishedTime, returnTime, responseTime, waitingTime, serviceTime, state, tme]
 
 def createOperation():
   a = random.randint(1, 100)
@@ -54,7 +56,7 @@ def timer(startTime, endTime):
 def showTime():
   global global_time
   minutes, seconds = divmod(global_time, 60)
-  print(f'[{minutes:02d}:{seconds:02d}]')
+  print(f'[{minutes:01d}:{seconds:02d}]')
 
 
 
@@ -78,6 +80,8 @@ def printInterface(startTime):
   try: 
     while len(executionMemory) != MAX_CAPACITY:
       process = listedProcesses.pop(0)
+      process[6] = int(time.time() - startTime) # Joined time
+      process[12] = 'Nuevo'
       executionMemory.append(process)
   except:
     pass
@@ -90,9 +94,16 @@ def printInterface(startTime):
     except:
       pass
 
-    elapsedTime = 0
     maxTime = process[2]
+    # State of process
+    process[12] = 'Listo'
+    # Response time
+    if process[9] == '-':
+      process[9] = int(time.time() - startTime)
+    # Waiting time
+    process[10] = int(process[9] - process[6])
     
+
     try:
       executionMemory.pop(0)
     except:
@@ -113,8 +124,8 @@ def printInterface(startTime):
 
       if interruption:
         process[2] = maxTime
-        process[3] += elapsedTime
         process[5] = 0 # 8 es el tiempo de bloqueo
+        process[12] = 'Bloqueado'
         blockedProcesses.append(process)
         interruption = False
         pressedIKey = True
@@ -122,7 +133,12 @@ def printInterface(startTime):
         break
 
       if error:
+        process[2] = maxTime
         process[4] = 'Error'
+        process[7] = int(time.time() - startTime)
+        process[8] = process[3]
+        process[11] = int(process[7] - process[10])
+        process[12] = 'Finalizado'
         finishedProcesses.append(process)
         error = False
         break
@@ -132,7 +148,15 @@ def printInterface(startTime):
       maxTime -= 1
       if maxTime == 0:
         result = makeOperation(process[1])       
+        # Result
         process[4] = result
+        # Finished time
+        process[7] = int( time.time() - startTime) + 1
+        # Return time
+        process[8] = int(process[7] - process[6])
+        # Service time
+        process[11] = process[13]
+        process[12] = 'Finalizado'
         finishedProcesses.append(process)
         
         
@@ -144,10 +168,11 @@ def printInterface(startTime):
       print(f'\tCola de procesos listos', end='\n\n')
       printList(executionMemory)
       print('------------------------------------------------') 
-
-      process[3] = elapsedTime
+      
+     
+    
       printProcess(process)
-      print(f'Tiempo restante: {maxTime}')
+      print(f'Tiempo restante: {maxTime + 1}')
       print('------------------------------------------------')
 
       if len(blockedProcesses) > 0:
@@ -156,13 +181,15 @@ def printInterface(startTime):
         print('------------------------------------------------')
       
       print('\tProcesos terminados', end='\n\n')
-      printFinished()      
-      elapsedTime += 1
-      time.sleep(.5)              
+      printFinished()   
+
+      process[3] += 1
+      time.sleep(1)              
 
     if len(executionMemory) < MAX_CAPACITY and pressedIKey == False:
       try:
         newProcess = listedProcesses.pop(0)
+        newProcess[6] = int(time.time() - startTime)
         executionMemory.append(newProcess)
 
       except:
@@ -174,13 +201,13 @@ def printInterface(startTime):
 
   
   os.system('cls')
-  print(f'Procesos nuevos: {len(listedProcesses)}', end='\t\t\t')
+  print(f'Procesos nuevos: {len(listedProcesses)}', end='\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t')
   timer(startTime, time.time())
   showTime()
-  print('------------------------------------------------')
-  print('\tProcesos terminados', end='\n\n')
-  printFinished()
-  print('------------------------------------------------')
+  print('----------------------------------------------------------------------------------------------------------------------------------------------')
+  print('\t\t\t\t\t\t\tProcesos terminados', end='\n\n')
+  printFinishedTimes()
+  print('----------------------------------------------------------------------------------------------------------------------------------------------')
   print('Se han terminado todos los procesos.', end='\n\n')
   os.system('pause')
 
@@ -249,8 +276,13 @@ def makeOperation(operation):
 def printFinished():
   print ("{:<5} {:<10} {:<10} {:<5}".format('ID','Operación', 'Resultado', 'Estado'), end='\n\n')
   for process in finishedProcesses:
-    print ("{:<5} {:<10} {:<10} {:<5}".format(process[0],process[1], process[4], 'Finalizado'))
+    print ("{:<5} {:<10} {:<10} {:<5}".format(process[0],process[1], process[4], process[12]))
   
+
+def printFinishedTimes():
+  print("{:<5}{:<11}{:<11}{:<7}{:<10}{:<17}{:<12}{:<17}{:<13}{:<11}{:<12}{:<0}".format('ID', 'Operacion', 'Resultado', 'TME', 'Estado', 'T. Transcurrido', 'T. Llegada', 'T. Finalización', 'T. Servicio', 'T. Espera', 'T. Retorno', 'T. Respuesta'), end='\n\n')
+  for process in finishedProcesses:
+    print("{:<7}{:<12}{:<9}{:<4}{:<20}{:<14}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
 
 # Eventos de teclado
 def on_i_press(event):
