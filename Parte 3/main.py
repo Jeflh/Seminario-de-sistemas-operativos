@@ -19,7 +19,7 @@ global_time = 0
 def newProcess(count):
   numberID = count # 0
   operation = createOperation() # 1
-  maxTime = random.randint(5, 6) # 2 debe ser 5, 16
+  maxTime = random.randint(5, 16) # 2 debe ser 5, 16
   elapsedTime = 0 # 3
   result = None # 4
   blockedTime = 0 # 5
