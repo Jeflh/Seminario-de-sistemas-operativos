@@ -134,7 +134,7 @@ def printInterface(startTime):
 
       if error:
         process[2] = maxTime
-        process[4] = 'Error'
+        process[4] = 'ERROR'
         process[7] = int(time.time() - startTime)
         process[8] = process[3]
         process[11] = int(process[7] - process[10])
@@ -280,9 +280,9 @@ def printFinished():
   
 
 def printFinishedTimes():
-  print("{:<5}{:<11}{:<11}{:<7}{:<10}{:<17}{:<12}{:<17}{:<13}{:<11}{:<12}{:<0}".format('ID', 'Operacion', 'Resultado', 'TME', 'Estado', 'T. Transcurrido', 'T. Llegada', 'T. Finalización', 'T. Servicio', 'T. Espera', 'T. Retorno', 'T. Respuesta'), end='\n\n')
+  print("{:<4}{:<11}{:<11}{:<7}{:<10}{:<17}{:<12}{:<17}{:<13}{:<11}{:<12}{:<0}".format('ID', 'Operacion', 'Resultado', 'TME', 'Estado', 'T. Transcurrido', 'T. Llegada', 'T. Finalización', 'T. Servicio', 'T. Espera', 'T. Retorno', 'T. Respuesta'), end='\n\n')
   for process in finishedProcesses:
-    print("{:<7}{:<12}{:<9}{:<4}{:<20}{:<14}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
+    print("{:<6}{:<11}{:<10}{:<4}{:<20}{:<14}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
 
 # Eventos de teclado
 def on_i_press(event):
