@@ -15,7 +15,7 @@ interruption = False
 error = False
 global_time = 0
 
-
+                    # se crea un nuevo proceso con los datos necesarios para su ejecución  
 def newProcess(count):
   numberID = count # 0
   operation = createOperation() # 1
@@ -119,6 +119,7 @@ def printInterface(startTime):
         startTime = startTime + inactiveTime
         global_time -= inactiveTime
 
+                                # tiempos de bloqueo COn coldown de 8 ---------
       if interruption:
         process[2] = maxTime
         process[5] = 0 # 8 es el tiempo de bloqueo
@@ -128,7 +129,7 @@ def printInterface(startTime):
         pressedIKey = True
         countProcess += 1
         break
-
+      
       if error:
         process[2] = maxTime
         process[4] = 'ERROR'
@@ -144,7 +145,10 @@ def printInterface(startTime):
 
       os.system('cls')
       
+      
       maxTime -= 1
+
+                            #Se guarda todos los datos del proceso finalizado correctamente en la lista de procesos terminados --------
       if maxTime == 0:
         result = makeOperation(process[1])       
         # Result
@@ -273,13 +277,13 @@ def makeOperation(operation):
 
   return round(result, 2)
 
-
+                                      #Tabla de procesos terminados en ejecución -------------------------------
 def printFinished():
   print ("{:<5} {:<10} {:<10} {:<5}".format('ID','Operación', 'Resultado', 'Estado'), end='\n\n')
   for process in finishedProcesses:
     print ("{:<5} {:<10} {:<10} {:<5}".format(process[0],process[1], process[4], process[12]))
   
-
+                                      # tabla final de procesos terminados con todos los tiempos ----------------
 def printFinishedTimes():
   print("{:<4}{:<11}{:<11}{:<7}{:<10}{:<17}{:<12}{:<17}{:<13}{:<11}{:<12}{:<0}".format('ID', 'Operacion', 'Resultado', 'TME', 'Estado', 'T. Transcurrido', 'T. Llegada', 'T. Finalización', 'T. Servicio', 'T. Espera', 'T. Retorno', 'T. Respuesta'), end='\n\n')
   for process in finishedProcesses:
