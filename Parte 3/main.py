@@ -133,7 +133,9 @@ def printInterface(startTime):
         process[2] = maxTime
         process[4] = 'ERROR'
         process[7] = int(time.time() - startTime)
+        # Return time
         process[8] = int(process[7] - process[6])
+        # Service time
         process[11] = process[3]
          # Waiting time
         process[10] = int(process[8] - process[11])
