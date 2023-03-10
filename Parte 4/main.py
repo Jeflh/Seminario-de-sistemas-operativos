@@ -175,7 +175,7 @@ def printInterface(startTime):
         timer(startTime, time.time())
         showTime()
         print('----------------------------------------------------------------------------------------------------------------------------------------------')
-        print('\t\t\t\t\t\t\tProcesos terminados', end='\n\n')
+        print('\t\t\t\t\t\t\tTabla de procesos (BCP)', end='\n\n')
         printAllTimes(executionMemory, process)
         print('----------------------------------------------------------------------------------------------------------------------------------------------')
         pausedTime = time.time()
