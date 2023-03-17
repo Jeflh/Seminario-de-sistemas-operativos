@@ -250,9 +250,9 @@ def printInterface(startTime):
       if noProcessYet == False and process != []:
         process[3] += 1
       
-      print("Contador: ", countProcess)
-      print("Tiempo Maximo: ", maxTime)
-      print("Tiempo I: ", i)
+      # print("Contador: ", countProcess)
+      # print("Tiempo Maximo: ", maxTime)
+      # print("Tiempo I: ", i)
 
       time.sleep(1) 
        
@@ -268,12 +268,12 @@ def printInterface(startTime):
         pass
      
     pressedIKey = False
-    
+
     if noProcessYet == False and process != []:
       i += 1
   # Fin del ciclo WHILE
 
-  print(len(listedProcesses), len(executionMemory), len(blockedProcesses))
+  # print(len(listedProcesses), len(executionMemory), len(blockedProcesses))
 
   if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
     os.system('cls')
