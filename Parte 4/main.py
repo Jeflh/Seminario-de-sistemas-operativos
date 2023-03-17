@@ -97,21 +97,27 @@ def printInterface(startTime):
   while i < countProcess:
     try:
       process = executionMemory[0]
+      noProcessYet = False
     except:
-      pass
-
-    maxTime = process[2]
-    # State of process
-    process[12] = 'Listo'
-    # Response time
-    if process[9] == '-':
-      process[9] = int(time.time() - startTime)   
+      noProcessYet = True
+      process = []
+      
+    if noProcessYet == False:
+      maxTime = process[2]
+      # State of process
+      process[12] = 'Listo'
+      # Response time
+      if process[9] == '-':
+        process[9] = int(time.time() - startTime)   
 
     try:
       executionMemory.pop(0)
+      noProcessYet = False
     except:
-      pass
-  
+      noProcessYet = True
+      maxTime = 99
+      
+    
     while maxTime > 0:
 
       if pause_program:
@@ -127,27 +133,30 @@ def printInterface(startTime):
 
       # tiempos de bloqueo COn coldown de 8
       if interruption:
-        process[2] = maxTime
-        process[5] = 0 # 8 es el tiempo de bloqueo
-        process[12] = 'Bloqueado'
-        blockedProcesses.append(process)
+        if noProcessYet == False:
+          process[2] = maxTime
+          process[5] = 0 # 8 es el tiempo de bloqueo
+          process[12] = 'Bloqueado'
+          blockedProcesses.append(process)
+        
         interruption = False
         pressedIKey = True
         countProcess += 1
         break
       
       if error:
-        process[2] = maxTime
-        process[4] = 'ERROR'
-        process[7] = int(time.time() - startTime)
-        # Return time
-        process[8] = int(process[7] - process[6])
-        # Service time
-        process[11] = process[3]
-         # Waiting time
-        process[10] = int(process[8] - process[11])
-        process[12] = 'Terminado'
-        finishedProcesses.append(process)
+        if noProcessYet == False and process != []:
+          process[2] = maxTime
+          process[4] = 'ERROR'
+          process[7] = int(time.time() - startTime)
+          # Return time
+          process[8] = int(process[7] - process[6])
+          # Service time
+          process[11] = process[3]
+          # Waiting time
+          process[10] = int(process[8] - process[11])
+          process[12] = 'Terminado'
+          finishedProcesses.append(process)
         error = False
         break
 
@@ -164,6 +173,9 @@ def printInterface(startTime):
 
         key_new_process = False
 
+        if noProcessYet:
+          noProcessYet = False
+          break
 
       if show_table:
         process[2] = maxTime
@@ -190,10 +202,11 @@ def printInterface(startTime):
 
       os.system('cls')
       
-      maxTime -= 1
+      if noProcessYet == False and process != []:
+        maxTime -= 1
 
       #Se guarda todos los datos del proceso finalizado correctamente en la lista de procesos terminados
-      if maxTime == 0:
+      if maxTime == 0 and process != []:
         result = makeOperation(process[1])       
         # Result
         process[4] = result
@@ -207,58 +220,72 @@ def printInterface(startTime):
         process[10] = int(process[8] - process[11])
         process[12] = 'Terminado'
         finishedProcesses.append(process)
-        
-        
+          
       print(f'Nuevos procesos: {len(listedProcesses)}', end='\t\t\t')
       timer(startTime, time.time())
       showTime()
       print('------------------------------------------------')
 
       print(f'\tCola de procesos listos', end='\n\n')
-      printList(executionMemory)
+      if noProcessYet == False and process != []:
+        printList(executionMemory)
       print('------------------------------------------------') 
       
-     
-    
-      printProcess(process)
-      print(f'Tiempo restante: {maxTime + 1}')
+      print('\tProceso en ejecución', end='\n\n')
+
+      if noProcessYet == False and process != []:
+        printProcess(process)
+        print(f'Tiempo restante: {maxTime + 1}')
+      
       print('------------------------------------------------')
 
       if len(blockedProcesses) > 0:
         print('\tProcesos bloqueados', end='\n\n')
-        blockedProcesses, executionMemory = printBlocked(blockedProcesses, executionMemory)
+        blockedProcesses, executionMemory, noProcessYet, maxTime = printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime)
         print('------------------------------------------------')
       
       print('\tProcesos terminados', end='\n\n')
       printFinished()   
+      
+      if noProcessYet == False and process != []:
+        process[3] += 1
+      
+      print("Contador: ", countProcess)
+      print("Tiempo Maximo: ", maxTime)
+      print("Tiempo I: ", i)
 
-      process[3] += 1
-      time.sleep(1)              
+      time.sleep(1) 
+       
 
     if len(executionMemory) < MAX_CAPACITY and pressedIKey == False:
       try:
         newProcess = listedProcesses.pop(0)
         newProcess[6] = int(time.time() - startTime)
         executionMemory.append(newProcess)
+        countProcess += 1
 
       except:
         pass
      
     pressedIKey = False
-    i += 1
+    
+    if noProcessYet == False and process != []:
+      i += 1
   # Fin del ciclo WHILE
 
-  
-  os.system('cls')
-  print(f'Procesos nuevos: {len(listedProcesses)}', end='\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t')
-  timer(startTime, time.time())
-  showTime()
-  print('----------------------------------------------------------------------------------------------------------------------------------------------')
-  print('\t\t\t\t\t\t\tProcesos terminados', end='\n\n')
-  printTableOfTimes()
-  print('----------------------------------------------------------------------------------------------------------------------------------------------')
-  print('Se han terminado todos los procesos.', end='\n\n')
-  os.system('pause')
+  print(len(listedProcesses), len(executionMemory), len(blockedProcesses))
+
+  if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
+    os.system('cls')
+    print(f'Procesos nuevos: {len(listedProcesses)}', end='\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t')
+    timer(startTime, time.time())
+    showTime()
+    print('----------------------------------------------------------------------------------------------------------------------------------------------')
+    print('\t\t\t\t\t\t\tProcesos terminados', end='\n\n')
+    printTableOfTimes()
+    print('----------------------------------------------------------------------------------------------------------------------------------------------')
+    print('Se han terminado todos los procesos.', end='\n\n')
+    os.system('pause')
 
 
 def printList(list):
@@ -267,7 +294,7 @@ def printList(list):
     print ("{:<13} {:<24} {:<0}".format(process[0],process[2], process[3]))
 
 
-def printBlocked(blockedProcesses, executionMemory):   
+def printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime):   
   print("{:<10}{:<0}".format('ID', 'Tiempo bloqueo restante'), end='\n\n')
   for process in blockedProcesses:
     print("{:<20}{:<0}".format(process[0], process[5]))
@@ -280,11 +307,14 @@ def printBlocked(blockedProcesses, executionMemory):
       else:
         listedProcesses.insert(0, process)
 
-  return blockedProcesses, executionMemory
+      noProcessYet = False
+      if maxTime == 99:
+        maxTime = 0
+
+  return blockedProcesses, executionMemory, noProcessYet, maxTime
 
 
 def printProcess(process):
-  print('\tProceso en ejecución', end='\n\n')
   print(f'ID: {process[0]}')
   print(f'Operación: {process[1]}')
   print(f'Tiempo máximo estimado: {process[2]}')
