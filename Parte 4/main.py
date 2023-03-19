@@ -25,7 +25,7 @@ def createNewProcess(count):
   elapsedTime = 0 # 3
   result = '-' # 4
   blockedTime = 0 # 5
-  joinedTime = '-' # 6 Tiempo de llegada
+  joinedTime = 0 # 6 Tiempo de llegada
   finishedTime = '-' # 7 Tiempo de finalización
   returnTime = '-' # 8 Finalización - Llegada
   responseTime = '-' # 9 
@@ -336,9 +336,14 @@ def printTableOfTimes():
 def printAllTimes(executionMemory, blockedProcesses, actualProcess):
   print("{:<4}{:<11}{:<11}{:<7}{:<10}{:<17}{:<12}{:<17}{:<13}{:<11}{:<12}{:<0}".format('ID', 'Operacion', 'Resultado', 'TME', 'Estado', 'T. Transcurrido', 'T. Llegada', 'T. Finalización', 'T. Servicio', 'T. Espera', 'T. Retorno', 'T. Respuesta'), end='\n\n')
 
-  allProcess = blockedProcesses + executionMemory + finishedProcesses
+  allProcess = executionMemory + blockedProcesses + listedProcesses + finishedProcesses
   allProcess.insert(0, actualProcess)
   for process in allProcess:
+    # Actualizar tiempo de espera para cada proceso
+
+    if process[12] == 'Nuevo':
+      process[10] = global_time
+
     print("{:<6}{:<11}{:<9}{:<6}{:<18}{:<15}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
 
 def makeOperation(operation):
