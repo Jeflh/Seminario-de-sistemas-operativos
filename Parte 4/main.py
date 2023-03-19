@@ -29,8 +29,8 @@ def createNewProcess(count):
   finishedTime = '-' # 7 Tiempo de finalización
   returnTime = '-' # 8 Finalización - Llegada
   responseTime = '-' # 9 
-  waitingTime = '-' # 10
-  serviceTime = '-' # 11
+  waitingTime = 0 # 10 
+  serviceTime = 0 # 11
   state = 'Nuevo' # 12
   tme = maxTime # 13
 
@@ -113,6 +113,7 @@ def printInterface(startTime):
     try:
       executionMemory.pop(0)
       noProcessYet = False
+      process[10] = int(process[9] - process[6])
     except:
       noProcessYet = True
       maxTime = 99
@@ -153,8 +154,6 @@ def printInterface(startTime):
           process[8] = int(process[7] - process[6])
           # Service time
           process[11] = process[3]
-          # Waiting time
-          process[10] = int(process[8] - process[11])
           process[12] = 'Terminado'
           finishedProcesses.append(process)
         error = False
@@ -188,7 +187,7 @@ def printInterface(startTime):
         showTime()
         print('----------------------------------------------------------------------------------------------------------------------------------------------')
         print('\t\t\t\t\t\t\tTabla de procesos (BCP)', end='\n\n')
-        printAllTimes(executionMemory, process)
+        printAllTimes(executionMemory, blockedProcesses, process)
         print('----------------------------------------------------------------------------------------------------------------------------------------------')
         pausedTime = time.time()
         keyboard.wait('c')
@@ -217,7 +216,6 @@ def printInterface(startTime):
         # Service time
         process[11] = process[13]
          # Waiting time
-        process[10] = int(process[8] - process[11])
         process[12] = 'Terminado'
         finishedProcesses.append(process)
           
@@ -335,11 +333,10 @@ def printTableOfTimes():
     print("{:<6}{:<11}{:<9}{:<6}{:<18}{:<15}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
 
 
-def printAllTimes(executionMemory, actualProcess):
+def printAllTimes(executionMemory, blockedProcesses, actualProcess):
   print("{:<4}{:<11}{:<11}{:<7}{:<10}{:<17}{:<12}{:<17}{:<13}{:<11}{:<12}{:<0}".format('ID', 'Operacion', 'Resultado', 'TME', 'Estado', 'T. Transcurrido', 'T. Llegada', 'T. Finalización', 'T. Servicio', 'T. Espera', 'T. Retorno', 'T. Respuesta'), end='\n\n')
 
-  
-  allProcess = executionMemory + finishedProcesses
+  allProcess = blockedProcesses + executionMemory + finishedProcesses
   allProcess.insert(0, actualProcess)
   for process in allProcess:
     print("{:<6}{:<11}{:<9}{:<6}{:<18}{:<15}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
