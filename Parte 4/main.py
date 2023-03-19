@@ -113,7 +113,7 @@ def printInterface(startTime):
     try:
       executionMemory.pop(0)
       noProcessYet = False
-      process[10] = int(process[9] - process[6])
+      
     except:
       noProcessYet = True
       maxTime = 99
