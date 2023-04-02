@@ -276,11 +276,11 @@ def printInterface(startTime, quantum):
       # print("Contador: ", countProcess)
       # print("Tiempo Maximo: ", maxTime)
       # print("Tiempo I: ", i)
-      print('----------------------------------------------------------------------------------------------------------------------------------------------')
-      print(noProcessYet)
-      print(len(listedProcesses))
-      print(len(executionMemory))
-      print(len(blockedProcesses))
+      # print('----------------------------------------------------------------------------------------------------------------------------------------------')
+      # print(noProcessYet)
+      # print(len(listedProcesses))
+      # print(len(executionMemory))
+      # print(len(blockedProcesses))
       time.sleep(1) 
        
 
