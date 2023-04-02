@@ -97,6 +97,7 @@ def printInterface(startTime, quantum):
   stablistQuantum = quantum
 
   while i < countProcess:
+    
     try:
       process = executionMemory[0]
       noProcessYet = False
@@ -119,7 +120,10 @@ def printInterface(startTime, quantum):
     except:
       noProcessYet = True
       maxTime = 99
- 
+
+    if noProcessYet and len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
+      break
+  
     while maxTime > 0:
 
       if quantum == 0 and noProcessYet == False:
@@ -156,6 +160,7 @@ def printInterface(startTime, quantum):
           process[5] = 0 # 8 es el tiempo de bloqueo
           process[12] = 'Bloqueado'
           blockedProcesses.append(process)
+          quantum = stablistQuantum
         
         interruption = False
         pressedIKey = True
@@ -173,6 +178,7 @@ def printInterface(startTime, quantum):
           process[11] = process[3]
           process[12] = 'Terminado'
           finishedProcesses.append(process)
+          quantum = stablistQuantum
         error = False
         break
 
@@ -270,7 +276,11 @@ def printInterface(startTime, quantum):
       # print("Contador: ", countProcess)
       # print("Tiempo Maximo: ", maxTime)
       # print("Tiempo I: ", i)
-
+      print('----------------------------------------------------------------------------------------------------------------------------------------------')
+      print(noProcessYet)
+      print(len(listedProcesses))
+      print(len(executionMemory))
+      print(len(blockedProcesses))
       time.sleep(1) 
        
 
@@ -288,11 +298,12 @@ def printInterface(startTime, quantum):
 
     if noProcessYet == False and process != []:
       i += 1
+
   # Fin del ciclo WHILE
 
   # print(len(listedProcesses), len(executionMemory), len(blockedProcesses))
 
-  if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0 and quantum == 0:
+  if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
     os.system('cls')
     print(f'Procesos nuevos: {len(listedProcesses)}', end='\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t')
     timer(startTime, time.time())
