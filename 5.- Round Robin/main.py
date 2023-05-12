@@ -176,6 +176,8 @@ def printInterface(startTime, quantum):
           process[8] = int(process[7] - process[6])
           # Service time
           process[11] = process[3]
+          # Waiting time
+          process[10] = int(process[8] - process[11])
           process[12] = 'Terminado'
           finishedProcesses.append(process)
           quantum = stablistQuantum
@@ -240,6 +242,7 @@ def printInterface(startTime, quantum):
         # Service time
         process[11] = process[13]
          # Waiting time
+        process[10] = int(process[8] - process[11])
         process[12] = 'Terminado'
         finishedProcesses.append(process)
           
