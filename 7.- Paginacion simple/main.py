@@ -13,8 +13,8 @@ frames = MEMORY_SIZE // PAGE_SIZE
 
 # Crear la memoria como una lista de marcos de página vacíos
 memory = [' '] * frames
-memory[0] = 'SO '
-memory[1] = 'SO '
+memory[38] = '💿'
+memory[39] = '💿'
 frames -= 2
 
 listedProcesses = []
@@ -125,14 +125,14 @@ def printInterface(startTime, quantum):
         for i in range(num_pages):
           empty_frame = find_empty_frame()
           if empty_frame is not None:
-              memory[empty_frame] = '🔵'
+              memory[empty_frame] = '💙'
               process[15].append(empty_frame)
 
         executionMemory.append(process)
         frames -= num_pages
 
       else:
-        listedProcesses.append(process)
+        listedProcesses.insert(0, process)
         break
 
   except:
@@ -157,8 +157,6 @@ def printInterface(startTime, quantum):
       maxTime = process[2]
       # State of process
       process[12] = 'Listo'
-      for frame_index in process[15]:
-        memory[frame_index] = '🔵'
       # Response time
       if process[9] == '-':
         process[9] = int(time.time() - startTime)   
@@ -175,8 +173,10 @@ def printInterface(startTime, quantum):
       break
   
     while maxTime > 0:
-      for frame_index in process[15]:
-        memory[frame_index] = '🔴'
+
+      if process != []:
+        for frame_index in process[15]:
+          memory[frame_index] = '💗'
 
       if quantum == 0 and noProcessYet == False:
         quantum = stablistQuantum
@@ -185,7 +185,7 @@ def printInterface(startTime, quantum):
         listedProcesses.append(process)
 
         for frame_index in process[15]:
-            memory[frame_index] = '🔵'
+            memory[frame_index] = '💙'
 
         try:
           newProcess = listedProcesses.pop(0)
@@ -218,7 +218,7 @@ def printInterface(startTime, quantum):
           blockedProcesses.append(process)
           quantum = stablistQuantum
           for frame_index in process[15]:
-            memory[frame_index] = '🟣'
+            memory[frame_index] = '💜'
         
         interruption = False
         pressedIKey = True
@@ -241,6 +241,7 @@ def printInterface(startTime, quantum):
 
           for frame_index in process[15]:
             memory[frame_index] = ' '
+          frames += len(process[15])
 
 
         error = False
@@ -260,10 +261,10 @@ def printInterface(startTime, quantum):
           for i in range(num_pages):
             empty_frame = find_empty_frame()
             if empty_frame is not None:
-                memory[empty_frame] = '🔵'
-                process[15].append(empty_frame)
+                memory[empty_frame] = '💙'
+                newProcess[15].append(empty_frame)
 
-          executionMemory.append(process)
+          executionMemory.append(newProcess)
           frames -= num_pages
             
         key_new_process = False
@@ -319,6 +320,7 @@ def printInterface(startTime, quantum):
         finishedProcesses.append(process)
         for frame_index in process[15]:
           memory[frame_index] = ' '
+        frames += len(process[15])
           
       print(f'Nuevos procesos: {len(listedProcesses)}', end='\t\t\t')
       timer(startTime, time.time())
@@ -341,7 +343,7 @@ def printInterface(startTime, quantum):
 
       if len(blockedProcesses) > 0:
         print('\tProcesos bloqueados', end='\n\n')
-        blockedProcesses, executionMemory, noProcessYet, maxTime = printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime)
+        blockedProcesses, executionMemory, enoProcessYet, maxTime = printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime)
         print('------------------------------------------------')
       
       print('\tProcesos terminados', end='\n\n')
@@ -365,9 +367,26 @@ def printInterface(startTime, quantum):
     if frames >= 0 and pressedIKey == False:
       try:
         newProcess = listedProcesses.pop(0)
-        newProcess[6] = int(time.time() - startTime)
-        executionMemory.append(newProcess)
-        countProcess += 1
+        newProcess[6] = int(time.time() - startTime) # Joined time
+        num_pages = divide_into_pages(newProcess[14])
+
+        if (frames - num_pages) >= 0:
+          newProcess = listedProcesses.pop(0)
+          newProcess[6] = int(time.time() - startTime) # Joined time
+        
+          for i in range(num_pages):
+            empty_frame = find_empty_frame()
+            if empty_frame is not None:
+                memory[empty_frame] = '💙'
+                newProcess[15].append(empty_frame)
+
+          executionMemory.append(newProcess)
+          countProcess += 1
+          frames -= num_pages
+
+        else:
+          # Agregar al principio de la lista de procesos
+          listedProcesses.insert(0, newProcess)
 
       except:
         pass
@@ -397,16 +416,17 @@ def printInterface(startTime, quantum):
 def printMemory():
   global memory
 
-  print('\n\t\tNúmero de marcos de memoria ')
+  print('\n\t\tMarcos de memoria')
   for i in range(40):
     # Salto de linea cada 4 elementos
     if i % 4 == 0:
       print()
 
-     # Mostrar el índice con dos dígitos
-    index = str(i+1).zfill(2)
-
+    # Mostrar el índice con dos dígitos
+    index = str(i).zfill(2)
     print(f'{index}: {memory[i]}', end='\t\t')
+
+  print()
 
 
 def printList(list):
@@ -416,17 +436,22 @@ def printList(list):
 
 
 def printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime):   
+  global frames
   print("{:<10}{:<0}".format('ID', 'Tiempo bloqueo restante'), end='\n\n')
   for process in blockedProcesses:
     print("{:<20}{:<0}".format(process[0], process[5]))
     process[5] += 1
-  
+
     if process[5] == 8:
       blockedProcesses.remove(process)
-      if len(executionMemory) < 3:
-        executionMemory.insert(3, process)
+      frames += len(process[15])
+
+      if frames - len(process[15]) >= 0:
+        executionMemory.append(process)
+        frames -= len(process[15])
+
       else:
-        listedProcesses.insert(0, process)
+        listedProcesses.append(process)
 
       noProcessYet = False
       if maxTime == 99:
@@ -517,6 +542,11 @@ def on_e_press(event):
     global error
     error = True
 
+def on_a_press(event):
+  if event.event_type == 'down':
+    # Pausar el procesamiento de lotes
+    global pause_program
+    pause_program = True
 
 def on_p_press(event):
   if event.event_type == 'down':
@@ -568,6 +598,7 @@ if __name__ == '__main__':
   keyboard.on_press_key('i', on_i_press)
   keyboard.on_press_key('e', on_e_press)
   keyboard.on_press_key('p', on_p_press)
+  keyboard.on_press_key('a', on_a_press)
   keyboard.on_press_key('c', on_c_press)
   keyboard.on_press_key('n', on_n_press)
   keyboard.on_press_key('t', on_t_press)
