@@ -15,8 +15,8 @@ frames = MEMORY_SIZE // PAGE_SIZE
 memory = [' '] * frames
 memory[0] = 'SO '
 memory[1] = 'SO '
+frames -= 2
 
-MAX_CAPACITY = 4 
 listedProcesses = []
 blockedProcesses = []
 finishedProcesses = []
@@ -105,6 +105,7 @@ def printInterface(startTime, quantum):
   global listedProcesses
   global blockedProcesses
   global memory
+  global frames
 
   
   countProcess = len(listedProcesses)
@@ -113,18 +114,33 @@ def printInterface(startTime, quantum):
   executionMemory = []
   pressedIKey = False
 
+
   try: 
-    while len(executionMemory) != MAX_CAPACITY:
+    while frames >= 0:
       process = listedProcesses.pop(0)
       process[6] = int(time.time() - startTime) # Joined time
-      executionMemory.append(process)
-      for frame_index in process[15]:
-        memory[frame_index] = '🔵'
+      num_pages = divide_into_pages(process[14])
+
+      if (frames - num_pages) >= 0:
+        for i in range(num_pages):
+          empty_frame = find_empty_frame()
+          if empty_frame is not None:
+              memory[empty_frame] = '🔵'
+              process[15].append(empty_frame)
+
+        executionMemory.append(process)
+        frames -= num_pages
+
+      else:
+        listedProcesses.append(process)
+        break
+
   except:
     pass
 
   i = 0
   
+
   stablistQuantum = quantum
 
   while i < countProcess:
@@ -133,18 +149,6 @@ def printInterface(startTime, quantum):
       process = executionMemory[0]
       noProcessYet = False
 
-      if process[15] == []:
-        num_pages = divide_into_pages(process[14])
-
-        for i in range(num_pages):
-          empty_frame = find_empty_frame()
-          if empty_frame is not None:
-              memory[empty_frame] = '🔵'
-              process[15].append(empty_frame)
-          else:
-            print('\n\n\t\tNo hay espacio en memoria')
-            noProcessYet = True
-            os.system('pause')
     except:
       noProcessYet = True
       process = []
@@ -179,6 +183,7 @@ def printInterface(startTime, quantum):
         process[2] = maxTime
         process[12] = 'Listo'
         listedProcesses.append(process)
+
         for frame_index in process[15]:
             memory[frame_index] = '🔵'
 
@@ -246,13 +251,20 @@ def printInterface(startTime, quantum):
         totalProcess += 1
         newProcess = createNewProcess(totalProcess)
         listedProcesses.append(newProcess)
+        num_pages = divide_into_pages(newProcess[14])
 
-        if len(executionMemory) + len(blockedProcesses) < 3:
+        if (frames - num_pages) >= 0:
           newProcess = listedProcesses.pop(0)
           newProcess[6] = int(time.time() - startTime) # Joined time
-          executionMemory.append(newProcess)
-          for frame_index in process[15]:
-            memory[frame_index] = '🔵'
+        
+          for i in range(num_pages):
+            empty_frame = find_empty_frame()
+            if empty_frame is not None:
+                memory[empty_frame] = '🔵'
+                process[15].append(empty_frame)
+
+          executionMemory.append(process)
+          frames -= num_pages
             
         key_new_process = False
 
@@ -350,7 +362,7 @@ def printInterface(startTime, quantum):
       time.sleep(1) 
        
 
-    if len(executionMemory) < MAX_CAPACITY and pressedIKey == False:
+    if frames >= 0 and pressedIKey == False:
       try:
         newProcess = listedProcesses.pop(0)
         newProcess[6] = int(time.time() - startTime)
@@ -383,10 +395,10 @@ def printInterface(startTime, quantum):
 
 
 def printMemory():
-  global frames, memory
+  global memory
 
   print('\n\t\tNúmero de marcos de memoria ')
-  for i in range(frames):
+  for i in range(40):
     # Salto de linea cada 4 elementos
     if i % 4 == 0:
       print()
@@ -567,18 +579,10 @@ if __name__ == '__main__':
 
   while initialProcesses != 0:
     createdProcess = createNewProcess(count)
-    num_pages = divide_into_pages(createdProcess[14])
-
-    for i in range(num_pages):
-      empty_frame = find_empty_frame()
-      if empty_frame is not None:
-          memory[empty_frame] = '🔵'
-          createdProcess[15].append(empty_frame)
-
     if createdProcess is not None:
-      listedProcesses.append(createdProcess)
-      initialProcesses -= 1
-      count += 1
+        listedProcesses.append(createdProcess)
+        initialProcesses -= 1
+        count += 1
 
   os.system('cls')
   startTime = time.time()
