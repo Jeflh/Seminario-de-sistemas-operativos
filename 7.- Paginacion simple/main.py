@@ -328,6 +328,7 @@ def printInterface(startTime, quantum):
       print(f'Nuevos procesos: {len(listedProcesses)}', end='\t\t\t')
       timer(startTime, time.time())
       showTime()
+      print(f'Próximo:     ID: {listedProcesses[0][0]}     Peso: {listedProcesses[0][14]}     Páginas: {divide_into_pages(listedProcesses[0][14])}')
       print(f'Quantum: {stablistQuantum}\t\t   Quantum restante: {quantum + 1}')
       print('------------------------------------------------')
 
@@ -466,6 +467,8 @@ def printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime):
 def printProcess(process):
   print(f'ID: {process[0]}')
   print(f'Operación: {process[1]}')
+  print(f'Tamaño: {process[14]}')
+  print(f'Paginas: {process[15]}')
   print(f'Tiempo máximo estimado: {process[2]}')
   print(f'Tiempo transcurrido: {process[3]}')
   
