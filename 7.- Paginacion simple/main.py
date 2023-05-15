@@ -328,7 +328,10 @@ def printInterface(startTime, quantum):
       print(f'Nuevos procesos: {len(listedProcesses)}', end='\t\t\t')
       timer(startTime, time.time())
       showTime()
-      print(f'Próximo:     ID: {listedProcesses[0][0]}     Peso: {listedProcesses[0][14]}     Páginas: {divide_into_pages(listedProcesses[0][14])}')
+      try:
+        print(f'Próximo:     ID: {listedProcesses[0][0]}     Peso: {listedProcesses[0][14]}     Páginas: {divide_into_pages(listedProcesses[0][14])}')
+      except:
+        pass
       print(f'Quantum: {stablistQuantum}\t\t   Quantum restante: {quantum + 1}')
       print('------------------------------------------------')
 
