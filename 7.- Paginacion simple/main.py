@@ -128,6 +128,7 @@ def printInterface(startTime, quantum):
               memory[empty_frame] = '💙'
               process[15].append(empty_frame)
 
+        process[12] = 'Listo'
         executionMemory.append(process)
         frames -= num_pages
 
@@ -214,6 +215,7 @@ def printInterface(startTime, quantum):
         if noProcessYet == False:
           process[2] = maxTime
           process[5] = 0 # 8 es el tiempo de bloqueo
+          process[11] = process[3]
           process[12] = 'Bloqueado'
           blockedProcesses.append(process)
           quantum = stablistQuantum
@@ -329,7 +331,7 @@ def printInterface(startTime, quantum):
       timer(startTime, time.time())
       showTime()
       try:
-        print(f'Próximo:     ID: {listedProcesses[0][0]}     Peso: {listedProcesses[0][14]}     Páginas: {divide_into_pages(listedProcesses[0][14])}')
+        print(f'Próximo:     ID: {listedProcesses[0][0]}   Tamaño: {listedProcesses[0][14]}     Páginas: {divide_into_pages(listedProcesses[0][14])}')
       except:
         pass
       print(f'Quantum: {stablistQuantum}\t\t   Quantum restante: {quantum + 1}')
@@ -386,6 +388,7 @@ def printInterface(startTime, quantum):
             if empty_frame is not None:
                 memory[empty_frame] = '💙'
                 newProcess[15].append(empty_frame)
+            newProcess[12] = 'Listo'
 
           executionMemory.append(newProcess)
           countProcess += 1
@@ -423,7 +426,7 @@ def printInterface(startTime, quantum):
 def printMemory():
   global memory
 
-  print('\n\t\tMarcos de memoria')
+  print('\t\tMarcos de memoria')
   for i in range(40):
     # Salto de linea cada 4 elementos
     if i % 4 == 0:
@@ -498,7 +501,7 @@ def printAllTimes(executionMemory, blockedProcesses, actualProcess):
   for process in allProcess:
     # Actualizar tiempo de espera para cada proceso
 
-    if process[12] == 'Nuevo':
+    if process[12] == 'Listo' and process[9] == '-':
       process[10] = global_time
 
     print("{:<6}{:<11}{:<9}{:<6}{:<18}{:<15}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
