@@ -175,7 +175,7 @@ def printInterface(startTime, quantum):
       noProcessYet = True
       maxTime = 99
 
-    if noProcessYet and len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
+    if noProcessYet and len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0 and suspendedCount == 0:
       break
   
     while maxTime > 0:
@@ -285,19 +285,20 @@ def printInterface(startTime, quantum):
         if processesLoaded == [] or processesLoaded == None:
           pass
         else:
-          listedProcesses.append(processesLoaded)
           num_pages = divide_into_pages(processesLoaded[14])
           if (frames - num_pages) >= 0:
-            processesLoaded = listedProcesses.pop(0)
-
             for frame in processesLoaded[15]:
               memory[frame] = '💙 ID:' + str(processesLoaded[0])
 
             executionMemory.append(processesLoaded)
             frames -= num_pages
 
-          suspendedCount -= 1
-          load_suspend = False
+            suspendedCount -= 1
+
+        load_suspend = False
+        if noProcessYet:
+          noProcessYet = False
+          break
         
 
       if show_table:
@@ -413,7 +414,7 @@ def printInterface(startTime, quantum):
       time.sleep(1) 
        
 
-    if frames >= 0 and pressedIKey == False:
+    if frames >= 0 and pressedIKey == False or suspendedCount > 0:
       try:
         newProcess = listedProcesses.pop(0)
         newProcess[6] = int(time.time() - startTime) # Joined time
@@ -450,7 +451,7 @@ def printInterface(startTime, quantum):
 
   # print(len(listedProcesses), len(executionMemory), len(blockedProcesses))
 
-  if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
+  if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0 and suspendedCount == 0:
     os.system('cls')
 
     timer(startTime, time.time())
@@ -553,51 +554,55 @@ def printAllTimes(executionMemory, blockedProcesses, actualProcess):
 
 
 def openFile():
-    try:
-      with open('suspendido.txt', 'r+') as suspendedProcesses:
-        lines = [line.rstrip('\n') for line in suspendedProcesses]
+  global frames
+  try:
+    with open('suspendido.txt', 'r+') as suspendedProcesses:
+      lines = [line.rstrip('\n') for line in suspendedProcesses]
 
-        process = lines[:16]
+      process = lines[:16]
+      requiredFrames = divide_into_pages(int(process[14]))
+
+      if (frames - requiredFrames) >= 0: # Si hay suficientes marcos de memoria disponibles
         suspendedProcesses.seek(0)
         suspendedProcesses.truncate()
         suspendedProcesses.writelines('\n'.join(lines[16:]))
-        
-        # numberID = count # int 0
-        # operation = createOperation() # str 1
-        # maxTime = random.randint(5, 16) # int 2
-        # elapsedTime = 0 # int 3
-        # result = '-' # str 4
-        # blockedTime = 0 # int 5 
-        # joinedTime = 0 # int 6
-        # finishedTime = '-' # str 7
-        # returnTime = '-' # str 8
-        # responseTime = '-' # str 9
-        # waitingTime = 0 # int 10
-        # serviceTime = 0 # int 11
-        # state = 'Nuevo' # str 12
-        # tme = maxTime # int 13
-        # size = random.randint(6, 25) # int 14
-        # frames = [] # list 15
+      
+      # numberID = count # int 0
+      # operation = createOperation() # str 1
+      # maxTime = random.randint(5, 16) # int 2
+      # elapsedTime = 0 # int 3
+      # result = '-' # str 4
+      # blockedTime = 0 # int 5 
+      # joinedTime = 0 # int 6
+      # finishedTime = '-' # str 7
+      # returnTime = '-' # str 8
+      # responseTime = '-' # str 9
+      # waitingTime = 0 # int 10
+      # serviceTime = 0 # int 11
+      # state = 'Nuevo' # str 12
+      # tme = maxTime # int 13
+      # size = random.randint(6, 25) # int 14
+      # frames = [] # list 15
 
-        # Convertir a int los valores que lo necesiten
-        process[0] = int(process[0])
-        process[2] = int(process[2])
-        process[3] = int(process[3])
-        process[5] = int(process[5])
-        process[6] = int(process[6])
-        process[9] = int(process[9])
-        process[10] = int(process[10])
-        process[11] = int(process[11])
-        process[13] = int(process[13])
-        process[14] = int(process[14])
-        
-        # Convertir a list los valores que lo necesiten
-        process[15] = [int(i) for i in process[15][1:-1].split(',')]
+      # Convertir a int los valores que lo necesiten
+      process[0] = int(process[0])
+      process[2] = int(process[2])
+      process[3] = int(process[3])
+      process[5] = int(process[5])
+      process[6] = int(process[6])
+      process[9] = int(process[9])
+      process[10] = int(process[10])
+      process[11] = int(process[11])
+      process[13] = int(process[13])
+      process[14] = int(process[14])
+      
+      # Convertir a list los valores que lo necesiten
+      process[15] = [int(i) for i in process[15][1:-1].split(',')]
 
-        return process
+      return process
 
-    except FileNotFoundError:
-      return []
+  except FileNotFoundError:
+    return []
 
 
 def writeFile(process):
