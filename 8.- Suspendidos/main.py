@@ -20,6 +20,8 @@ frames -= 2
 listedProcesses = []
 blockedProcesses = []
 finishedProcesses = []
+save_suspend = False
+load_suspend = False
 pause_program = False
 interruption = False
 key_new_process = False
@@ -86,7 +88,7 @@ def timer(startTime, endTime):
 def showTime():
   global global_time
   minutes, seconds = divmod(global_time, 60)
-  print(f'[{minutes:01d}:{seconds:02d}]')
+  print(f'\t\t     [{minutes:01d}:{seconds:02d}]')
 
 
 
@@ -106,7 +108,10 @@ def printInterface(startTime, quantum):
   global blockedProcesses
   global memory
   global frames
+  global save_suspend
+  global load_suspend
 
+  suspendedCount = 0
   
   countProcess = len(listedProcesses)
   totalProcess = countProcess
@@ -274,6 +279,26 @@ def printInterface(startTime, quantum):
         if noProcessYet:
           noProcessYet = False
           break
+      
+      if load_suspend and suspendedCount > 0:
+        processesLoaded = openFile()
+        if processesLoaded == [] or processesLoaded == None:
+          pass
+        else:
+          listedProcesses.append(processesLoaded)
+          num_pages = divide_into_pages(processesLoaded[14])
+          if (frames - num_pages) >= 0:
+            processesLoaded = listedProcesses.pop(0)
+
+            for frame in processesLoaded[15]:
+              memory[frame] = '💙 ID:' + str(processesLoaded[0])
+
+            executionMemory.append(processesLoaded)
+            frames -= num_pages
+
+          suspendedCount -= 1
+          load_suspend = False
+        
 
       if show_table:
         process[2] = maxTime
@@ -326,10 +351,11 @@ def printInterface(startTime, quantum):
         for frame_index in process[15]:
           memory[frame_index] = '    '
         frames += len(process[15])
-          
-      print(f'Nuevos procesos: {len(listedProcesses)}', end='\t\t\t')
+
       timer(startTime, time.time())
-      showTime()
+      showTime() 
+      print(f'Procesos nuevos: {len(listedProcesses)} \t\tSuspendidos: {suspendedCount}')
+      
       try:
         print(f'Próximo:     ID: {listedProcesses[0][0]}   Tamaño: {listedProcesses[0][14]}     Páginas: {divide_into_pages(listedProcesses[0][14])}')
       except:
@@ -351,9 +377,23 @@ def printInterface(startTime, quantum):
       print('------------------------------------------------')
 
       if len(blockedProcesses) > 0:
+        if save_suspend:
+          suspendProcess = blockedProcesses.pop(0)
+          suspendProcess[12] = 'Nuevo'
+          suspendProcess[5] = 0
+          writeFile(suspendProcess)
+          for frame_index in suspendProcess[15]:
+            memory[frame_index] = '    '
+          frames += len(suspendProcess[15])
+          suspendedCount += 1
+          save_suspend = False
+
         print('\tProcesos bloqueados', end='\n\n')
         blockedProcesses, executionMemory, enoProcessYet, maxTime = printBlocked(blockedProcesses, executionMemory, noProcessYet, maxTime)
         print('------------------------------------------------')
+        
+      else:
+        save_suspend = False
       
       print('\tProcesos terminados', end='\n\n')
       printFinished()   
@@ -412,14 +452,19 @@ def printInterface(startTime, quantum):
 
   if len(listedProcesses) == 0 and len(executionMemory) == 0 and len(blockedProcesses) == 0:
     os.system('cls')
-    print(f'Procesos nuevos: {len(listedProcesses)}', end='\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t')
+
     timer(startTime, time.time())
-    showTime()
+    print(end='\t\t\t\t\t       ')
+    showTime() 
     print('----------------------------------------------------------------------------------------------------------------------------------------------')
     print('\t\t\t\t\t\t\tProcesos terminados', end='\n\n')
     printTableOfTimes()
     print('----------------------------------------------------------------------------------------------------------------------------------------------')
     print('Se han terminado todos los procesos.', end='\n\n')
+    try:
+      os.remove('suspendido.txt')
+    except OSError:
+      pass
     os.system('pause')
 
 
@@ -507,7 +552,61 @@ def printAllTimes(executionMemory, blockedProcesses, actualProcess):
     print("{:<6}{:<11}{:<9}{:<6}{:<18}{:<15}{:<14}{:<15}{:<12}{:<12}{:<13}{:<0}".format(process[0], process[1], process[4], process[13], process[12], process[3], process[6], process[7], process[11], process[10], process[8], process[9]))
 
 
-# Aquí empieza el sufrimiento --------------------------------------------
+def openFile():
+    try:
+      with open('suspendido.txt', 'r+') as suspendedProcesses:
+        lines = [line.rstrip('\n') for line in suspendedProcesses]
+
+        process = lines[:16]
+        suspendedProcesses.seek(0)
+        suspendedProcesses.truncate()
+        suspendedProcesses.writelines('\n'.join(lines[16:]))
+        
+        # numberID = count # int 0
+        # operation = createOperation() # str 1
+        # maxTime = random.randint(5, 16) # int 2
+        # elapsedTime = 0 # int 3
+        # result = '-' # str 4
+        # blockedTime = 0 # int 5 
+        # joinedTime = 0 # int 6
+        # finishedTime = '-' # str 7
+        # returnTime = '-' # str 8
+        # responseTime = '-' # str 9
+        # waitingTime = 0 # int 10
+        # serviceTime = 0 # int 11
+        # state = 'Nuevo' # str 12
+        # tme = maxTime # int 13
+        # size = random.randint(6, 25) # int 14
+        # frames = [] # list 15
+
+        # Convertir a int los valores que lo necesiten
+        process[0] = int(process[0])
+        process[2] = int(process[2])
+        process[3] = int(process[3])
+        process[5] = int(process[5])
+        process[6] = int(process[6])
+        process[9] = int(process[9])
+        process[10] = int(process[10])
+        process[11] = int(process[11])
+        process[13] = int(process[13])
+        process[14] = int(process[14])
+        
+        # Convertir a list los valores que lo necesiten
+        process[15] = [int(i) for i in process[15][1:-1].split(',')]
+
+        return process
+
+    except FileNotFoundError:
+      return []
+
+
+def writeFile(process):
+    try:
+      with open('suspendido.txt', 'a') as suspendedProcesses:
+        for item in process:
+          suspendedProcesses.writelines(str(item) + '\n')
+    except IOError:
+      pass
 
 
 def makeOperation(operation):
@@ -592,6 +691,18 @@ def on_t_press(event):
     show_table = True
 
 
+def on_s_press(event):
+  if event.event_type == 'down':
+    global save_suspend
+    save_suspend = True
+
+
+def on_r_press(event):
+  if event.event_type == 'down':
+    global load_suspend
+    load_suspend = True 
+
+
 if __name__ == '__main__':
   # Código principal
   count = 1
@@ -618,6 +729,8 @@ if __name__ == '__main__':
   keyboard.on_press_key('c', on_c_press)
   keyboard.on_press_key('n', on_n_press)
   keyboard.on_press_key('t', on_t_press)
+  keyboard.on_press_key('s', on_s_press)
+  keyboard.on_press_key('r', on_r_press)
 
   # Crear un hilo para la detección de pulsaciones de teclas
   key_thread = threading.Thread(target=keyboard.wait)
@@ -633,6 +746,12 @@ if __name__ == '__main__':
 
   os.system('cls')
   startTime = time.time()
+
+  # Borrar el archivo suspendido si es que existe
+  try:
+    os.remove('suspendido.txt')
+  except OSError:
+    pass
 
   setListedProcesses(listedProcesses)
   printInterface(startTime, quantum)
