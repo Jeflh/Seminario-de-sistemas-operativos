@@ -12,9 +12,9 @@ PAGE_SIZE = 5
 frames = MEMORY_SIZE // PAGE_SIZE
 
 # Crear la memoria como una lista de marcos de página vacíos
-memory = [' '] * frames
-memory[38] = '💿'
-memory[39] = '💿'
+memory = ['    '] * frames
+memory[38] = '💿   '
+memory[39] = '💿   '
 frames -= 2
 
 listedProcesses = []
@@ -57,7 +57,7 @@ def divide_into_pages(process_size):
 
 
 def find_empty_frame():
-    empty_frames = [i for i, frame in enumerate(memory) if frame == ' ']
+    empty_frames = [i for i, frame in enumerate(memory) if frame == '    ']
     if empty_frames:
         return random.choice(empty_frames)
     else:
@@ -125,7 +125,7 @@ def printInterface(startTime, quantum):
         for i in range(num_pages):
           empty_frame = find_empty_frame()
           if empty_frame is not None:
-              memory[empty_frame] = '💙'
+              memory[empty_frame] = '💙 ID:' + str(process[0])
               process[15].append(empty_frame)
 
         process[12] = 'Listo'
@@ -177,7 +177,7 @@ def printInterface(startTime, quantum):
 
       if process != []:
         for frame_index in process[15]:
-          memory[frame_index] = '💗'
+          memory[frame_index] = '💗 ID:' + str(process[0])
 
       if quantum == 0 and noProcessYet == False:
         quantum = stablistQuantum
@@ -186,7 +186,7 @@ def printInterface(startTime, quantum):
         listedProcesses.append(process)
 
         for frame_index in process[15]:
-            memory[frame_index] = '💙'
+            memory[frame_index] = '💙 ID:' + str(process[0])
 
         try:
           newProcess = listedProcesses.pop(0)
@@ -220,7 +220,7 @@ def printInterface(startTime, quantum):
           blockedProcesses.append(process)
           quantum = stablistQuantum
           for frame_index in process[15]:
-            memory[frame_index] = '💜'
+            memory[frame_index] = '💜 ID:' + str(process[0])
         
         interruption = False
         pressedIKey = True
@@ -242,7 +242,7 @@ def printInterface(startTime, quantum):
           quantum = stablistQuantum
 
           for frame_index in process[15]:
-            memory[frame_index] = ' '
+            memory[frame_index] = '    '
           frames += len(process[15])
 
 
@@ -263,7 +263,7 @@ def printInterface(startTime, quantum):
           for i in range(num_pages):
             empty_frame = find_empty_frame()
             if empty_frame is not None:
-                memory[empty_frame] = '💙'
+                memory[empty_frame] = '💙 ID:' + str(process[0])
                 newProcess[15].append(empty_frame)
 
           executionMemory.append(newProcess)
@@ -324,7 +324,7 @@ def printInterface(startTime, quantum):
         process[12] = 'Terminado'
         finishedProcesses.append(process)
         for frame_index in process[15]:
-          memory[frame_index] = ' '
+          memory[frame_index] = '    '
         frames += len(process[15])
           
       print(f'Nuevos procesos: {len(listedProcesses)}', end='\t\t\t')
@@ -386,7 +386,7 @@ def printInterface(startTime, quantum):
           for i in range(num_pages):
             empty_frame = find_empty_frame()
             if empty_frame is not None:
-                memory[empty_frame] = '💙'
+                memory[empty_frame] = '💙 ID:' + str(process[0])
                 newProcess[15].append(empty_frame)
             newProcess[12] = 'Listo'
 
@@ -426,7 +426,7 @@ def printInterface(startTime, quantum):
 def printMemory():
   global memory
 
-  print('\t\tMarcos de memoria')
+  print('\n\t\tMarcos de memoria')
   for i in range(40):
     # Salto de linea cada 4 elementos
     if i % 4 == 0:
@@ -474,7 +474,7 @@ def printProcess(process):
   print(f'ID: {process[0]}')
   print(f'Operación: {process[1]}')
   print(f'Tamaño: {process[14]}')
-  print(f'Paginas: {process[15]}')
+  print(f'Marcos: {process[15]}')
   print(f'Tiempo máximo estimado: {process[2]}')
   print(f'Tiempo transcurrido: {process[3]}')
   
