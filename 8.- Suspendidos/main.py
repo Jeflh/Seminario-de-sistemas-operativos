@@ -713,18 +713,24 @@ if __name__ == '__main__':
   count = 1
 
   os.system('cls')
-  totalProcesses = int(input('\nIngrese el numero de procesos inicial: '))
-  initialProcesses = totalProcesses
-  
-  
+
+  while True:
+    try:
+      totalProcesses = int(input('\nIngrese el numero de procesos inicial: '))
+      initialProcesses = totalProcesses
+      break
+    except ValueError:
+      print('Valor no válido, ingrese un número entero')
+    
   quantum = 0
 
   while True:
-    quantum = int(input('\nIngrese el quantum: '))
-    if quantum > 0 and quantum <= 16:
-      break
-    else:
-      print('Ingrese un valor válido')
+    try:
+      quantum = int(input('\nIngrese el quantum: '))
+      if quantum > 0 and quantum <= 16:
+        break
+    except ValueError:
+      print('Valor no válido, ingrese un número entero')
 
   # Registrar las funciones de devolución de llamada para cada tecla
   keyboard.on_press_key('i', on_i_press)
