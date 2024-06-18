@@ -4,7 +4,6 @@ import random
 import keyboard
 import threading
 
-
 # Variables globales
 MEMORY_SIZE = 200
 PAGE_SIZE = 5
